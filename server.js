@@ -2,7 +2,7 @@
 
 const express = require('express');
 
-const {PORT} = require('./config')
+const {PORT} = require('./config');
 
 const {logger} = require('./middleware/logger');
 
@@ -17,6 +17,7 @@ const app = express();
 // Create a static webserver
 app.use(express.static('public'));
 
+// Parse request body
 app.use(express.json());
 
 app.use(logger);
@@ -24,14 +25,14 @@ app.use(logger);
 // Get All (and search by query)
 app.get('/api/notes', (req, res, next) => {
 
-    const { searchTerm } = req.query;
+  const { searchTerm } = req.query;
 
-    notes.filter(searchTerm, (err, list) => {
-        if (err) {
-        return next(err); // goes to error handler
-        }
-        res.json(list); // responds with filtered array
-    });
+  notes.filter(searchTerm, (err, list) => {
+    if (err) {
+      return next(err); // goes to error handler
+    }
+    res.json(list); // responds with filtered array
+  });
   // Basic JSON response (data is an array of objects)
   // res.json(data);
 
@@ -48,21 +49,21 @@ app.get('/api/notes', (req, res, next) => {
   /**
    * Verbose solution
    */
-//   const searchTerm = req.query.searchTerm;
-//   if (searchTerm) {
-//     let filteredList = data.filter(function(item) {
-//       return item.title.includes(searchTerm);
-//     });
-//     res.json(filteredList);
-//   } else {
-//     res.json(data);
-//   }
+  //   const searchTerm = req.query.searchTerm;
+  //   if (searchTerm) {
+  //     let filteredList = data.filter(function(item) {
+  //       return item.title.includes(searchTerm);
+  //     });
+  //     res.json(filteredList);
+  //   } else {
+  //     res.json(data);
+  //   }
 
   /**
    * Terse solution
    */
-//   const { searchTerm } = req.query;
-//   res.json(searchTerm ? data.filter(item => item.title.includes(searchTerm)) : data);
+  //   const { searchTerm } = req.query;
+  //   res.json(searchTerm ? data.filter(item => item.title.includes(searchTerm)) : data);
 
 });
 
@@ -72,16 +73,16 @@ app.get('/api/notes/:id', (req, res, next) => {
 
   notes.find(id, (err, item) => {
     if (err) {
-    return next(err); // goes to error handler
+      return next(err); // goes to error handler
     }
     res.json(item); // responds with filtered array
-});
+  });
   /**
    * Verbose solution
    */
-//   let note = data.find(function(item) {
-//     return item.id === Number(id);
-//   });
+  //   let note = data.find(function(item) {
+  //     return item.id === Number(id);
+  //   });
 
   /**
    * Terse solution
@@ -91,43 +92,43 @@ app.get('/api/notes/:id', (req, res, next) => {
 });
 
 app.put('/api/notes/:id', (req, res, next) => {
-    const id = req.params.id;
+  const id = req.params.id;
 
-    /***** Never trust users - validate input *****/
-    const updateObj = {};
-    const updateFields = ['title', 'content'];
+  /***** Never trust users - validate input *****/
+  const updateObj = {};
+  const updateFields = ['title', 'content'];
 
-    updateFields.forEach(field => {
-        if (field in req.body) {
-        updateObj[field] = req.body[field];
-        }
-    });
+  updateFields.forEach(field => {
+    if (field in req.body) {
+      updateObj[field] = req.body[field];
+    }
+  });
 
-    notes.update(id, updateObj, (err, item) => {
-        if (err) {
-        return next(err);
-        }
-        if (item) {
-        res.json(item);
-        } else {
-        next();
-        }
-    });
+  notes.update(id, updateObj, (err, item) => {
+    if (err) {
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      next();
+    }
+  });
 });
 
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    res.status(404).json({ message: 'Not Found' });
+  var err = new Error('Not Found');
+  err.status = 404;
+  res.status(404).json({ message: 'Not Found' });
 });
 
 app.use(function (err, req, res, next) {
-    res.status(err.status || 500);
-    res.json({
-      message: err.message,
-      error: err
-    });
+  res.status(err.status || 500);
+  res.json({
+    message: err.message,
+    error: err
   });
+});
 
 // Listen for incoming connections
 app.listen(PORT, function () {
