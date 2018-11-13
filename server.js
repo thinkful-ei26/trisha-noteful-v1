@@ -17,6 +17,8 @@ const app = express();
 // Create a static webserver
 app.use(express.static('public'));
 
+app.use(express.json());
+
 app.use(logger);
 
 // Get All (and search by query)
@@ -87,6 +89,31 @@ app.get('/api/notes/:id', (req, res, next) => {
   // res.json(data.find(item => item.id === Number(id)));
 
 });
+
+app.put('/api/notes/:id', (req, res, next) => {
+    const id = req.params.id;
+  
+    /***** Never trust users - validate input *****/
+    const updateObj = {};
+    const updateFields = ['title', 'content'];
+  
+    updateFields.forEach(field => {
+      if (field in req.body) {
+        updateObj[field] = req.body[field];
+      }
+    });
+  
+    notes.update(id, updateObj, (err, item) => {
+      if (err) {
+        return next(err);
+      }
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
+    });
+  });
 
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
