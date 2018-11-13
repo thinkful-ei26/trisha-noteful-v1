@@ -8,6 +8,8 @@ const {logger} = require('./middleware/logger');
 
 // Load array of notes
 const data = require('./db/notes');
+const simDB = require('./db/simDB');
+const notes = simDB.initialize(data);
 
 // Create an Express application
 const app = express();
@@ -18,8 +20,16 @@ app.use(express.static('public'));
 app.use(logger);
 
 // Get All (and search by query)
-app.get('/api/notes', (req, res) => {
+app.get('/api/notes', (req, res, next) => {
 
+    const { searchTerm } = req.query;
+
+    notes.filter(searchTerm, (err, list) => {
+        if (err) {
+        return next(err); // goes to error handler
+        }
+        res.json(list); // responds with filtered array
+    });
   // Basic JSON response (data is an array of objects)
   // res.json(data);
 
@@ -36,21 +46,21 @@ app.get('/api/notes', (req, res) => {
   /**
    * Verbose solution
    */
-  const searchTerm = req.query.searchTerm;
-  if (searchTerm) {
-    let filteredList = data.filter(function(item) {
-      return item.title.includes(searchTerm);
-    });
-    res.json(filteredList);
-  } else {
-    res.json(data);
-  }
+//   const searchTerm = req.query.searchTerm;
+//   if (searchTerm) {
+//     let filteredList = data.filter(function(item) {
+//       return item.title.includes(searchTerm);
+//     });
+//     res.json(filteredList);
+//   } else {
+//     res.json(data);
+//   }
 
   /**
    * Terse solution
    */
-  // const { searchTerm } = req.query;
-  // res.json(searchTerm ? data.filter(item => item.title.includes(searchTerm)) : data);
+//   const { searchTerm } = req.query;
+//   res.json(searchTerm ? data.filter(item => item.title.includes(searchTerm)) : data);
 
 });
 
