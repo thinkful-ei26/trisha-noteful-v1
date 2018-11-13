@@ -65,16 +65,21 @@ app.get('/api/notes', (req, res, next) => {
 });
 
 // Get a single item
-app.get('/api/notes/:id', (req, res) => {
+app.get('/api/notes/:id', (req, res, next) => {
   const id = req.params.id;
 
+  notes.find(id, (err, item) => {
+    if (err) {
+    return next(err); // goes to error handler
+    }
+    res.json(item); // responds with filtered array
+});
   /**
    * Verbose solution
    */
-  let note = data.find(function(item) {
-    return item.id === Number(id);
-  });
-  res.json(note);
+//   let note = data.find(function(item) {
+//     return item.id === Number(id);
+//   });
 
   /**
    * Terse solution
