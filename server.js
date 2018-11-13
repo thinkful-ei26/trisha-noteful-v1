@@ -4,6 +4,8 @@ const express = require('express');
 
 const {PORT} = require('./config')
 
+const {logger} = require('./middleware/logger');
+
 // Load array of notes
 const data = require('./db/notes');
 
@@ -12,6 +14,8 @@ const app = express();
 
 // Create a static webserver
 app.use(express.static('public'));
+
+app.use(logger);
 
 // Get All (and search by query)
 app.get('/api/notes', (req, res) => {
