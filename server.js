@@ -92,28 +92,28 @@ app.get('/api/notes/:id', (req, res, next) => {
 
 app.put('/api/notes/:id', (req, res, next) => {
     const id = req.params.id;
-  
+
     /***** Never trust users - validate input *****/
     const updateObj = {};
     const updateFields = ['title', 'content'];
-  
+
     updateFields.forEach(field => {
-      if (field in req.body) {
+        if (field in req.body) {
         updateObj[field] = req.body[field];
-      }
+        }
     });
-  
+
     notes.update(id, updateObj, (err, item) => {
-      if (err) {
+        if (err) {
         return next(err);
-      }
-      if (item) {
+        }
+        if (item) {
         res.json(item);
-      } else {
+        } else {
         next();
-      }
+        }
     });
-  });
+});
 
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
