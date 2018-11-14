@@ -1,10 +1,9 @@
 'use strict';
 
 const express = require('express');
-
 const {PORT} = require('./config');
-
 const {logger} = require('./middleware/logger');
+const morgan = require('morgan');
 
 // Load array of notes
 const data = require('./db/notes');
@@ -13,6 +12,9 @@ const notes = simDB.initialize(data);
 
 // Create an Express application
 const app = express();
+
+//mount morgan
+app.use(morgan('dev'));
 
 // Create a static webserver
 app.use(express.static('public'));
