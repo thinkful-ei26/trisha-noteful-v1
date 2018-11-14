@@ -128,4 +128,20 @@ notesRouter.post('/notes', (req, res, next) => {
 });
 
 
+notesRouter.delete('/notes/:id', (req, res) => {
+  const id = req.params.id;
+
+  notes.delete(id, (err) => {
+    if (err) {
+      err.status(500);
+      return next(err); // goes to error handler
+    }
+    console.log(`Deleted shopping list item \`${req.params.ID}\``);
+    res.status(204).end();
+  });
+  
+});
+
+
+
 module.exports = notesRouter;
