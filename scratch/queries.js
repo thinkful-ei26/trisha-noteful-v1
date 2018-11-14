@@ -1,3 +1,5 @@
+'use strict';
+
 const data = require('../db/notes');
 const simDB = require('../db/simDB');
 const notes = simDB.initialize(data);
@@ -40,12 +42,12 @@ notes.update(1005, updateObj, (err, item) => {
 });
 
 notes.delete(1005, (err, item) => {
-    if (err) {
-        console.error(err);
-      }
-      if (item) {
-        console.log(item);
-      } else {
-        console.log('not found');
-      }
-})
+  if (err) {
+    console.error(err);
+  }
+  if (item) {
+    console.log(item);
+  } else {
+    console.log('not found');
+  }
+});
