@@ -14,43 +14,17 @@ notesRouter.get('/notes', (req, res, next) => {
 
   const { searchTerm } = req.query;
 
-  notes.filter(searchTerm, (err, list) => {
-    if (err) {
-      return next(err); // goes to error handler
-    }
-    res.json(list); // responds with filtered array
-  });
-  // Basic JSON response (data is an array of objects)
-  // res.json(data);
-
-  /**
-   * Implement Search
-   * Below are 2 solutions: verbose and terse. They are functionally identical but use different syntax
-   *
-   * Destructure the query string property in to `searchTerm` constant
-   * If searchTerm exists...
-   * then `filter` the data array where title `includes` the searchTerm value
-   * otherwise return `data` unfiltered
-   */
-
-  /**
-   * Verbose solution
-   */
-  //   const searchTerm = req.query.searchTerm;
-  //   if (searchTerm) {
-  //     let filteredList = data.filter(function(item) {
-  //       return item.title.includes(searchTerm);
-  //     });
-  //     res.json(filteredList);
-  //   } else {
-  //     res.json(data);
-  //   }
-
-  /**
-   * Terse solution
-   */
-  //   const { searchTerm } = req.query;
-  //   res.json(searchTerm ? data.filter(item => item.title.includes(searchTerm)) : data);
+  notes.filter(searchTerm)
+    .then(item => {
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 
 });
 
@@ -58,25 +32,19 @@ notesRouter.get('/notes', (req, res, next) => {
 notesRouter.get('/notes/:id', (req, res, next) => {
   const id = req.params.id;
 
-  notes.find(id, (err, item) => {
-    if (err) {
-      return next(err); // goes to error handler
-    }
-    res.json(item); // responds with filtered array
-  });
-  /**
-   * Verbose solution
-   */
-  //   let note = data.find(function(item) {
-  //     return item.id === Number(id);
-  //   });
-
-  /**
-   * Terse solution
-   */
-  // res.json(data.find(item => item.id === Number(id)));
-
+  notes.find(id)
+    .then(item => {
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 });
+
 
 notesRouter.put('/notes/:id', (req, res, next) => {
   const id = req.params.id;
@@ -91,16 +59,18 @@ notesRouter.put('/notes/:id', (req, res, next) => {
     }
   });
 
-  notes.update(id, updateObj, (err, item) => {
-    if (err) {
-      return next(err);
-    }
-    if (item) {
-      res.json(item);
-    } else {
-      next();
-    }
-  });
+  notes.update(id, updateObj)
+    .then(item => {
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+
 });
 
 // Post (insert) an item
@@ -115,30 +85,39 @@ notesRouter.post('/notes', (req, res, next) => {
     return next(err);
   }
 
-  notes.create(newItem, (err, item) => {
-    if (err) {
-      return next(err);
-    }
-    if (item) {
-      res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-    } else {
-      next();
-    }
-  });
+  notes.create(newItem)
+    .then(item => {
+      if (item) {
+        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+
+
 });
 
 
 notesRouter.delete('/notes/:id', (req, res) => {
   const id = req.params.id;
 
-  notes.delete(id, (err) => {
-    if (err) {
+  notes.delete(id)
+    .then(item => {
+      if (item) {
+        console.log(`Deleted shopping list item \`${id}\``);
+        res.status(204).end();
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
       err.status(500);
       return next(err); // goes to error handler
-    }
-    console.log(`Deleted shopping list item \`${req.params.ID}\``);
-    res.status(204).end();
-  });
+    });
+
   
 });
 
