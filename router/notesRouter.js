@@ -107,8 +107,10 @@ notesRouter.delete('/notes/:id', (req, res) => {
   notes.delete(id)
     .then(item => {
       if (item) {
-        console.log(`Deleted shopping list item \`${req.params.ID}\``);
+        console.log(`Deleted shopping list item \`${id}\``);
         res.status(204).end();
+      } else {
+        next();
       }
     })
     .catch(err => {
