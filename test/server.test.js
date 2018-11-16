@@ -69,4 +69,31 @@ describe('GET /api/notes', () => {
         });
       });
   });
+
+  it('should return valid for a searchTerm', () => {
+    return chai.request(app)
+      .get('/api/notes?searchTerm=article')
+      .then((res) => {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a('array');
+        expect(res.body).to.have.length(2);
+        //console.log(res.body);
+      });
+  });
+
+  it('should return valid for an INVALID searchTerm', () => {
+    return chai.request(app)
+      .get('/api/notes?searchTerm=article%20something%20notValid')
+      .then((res) => {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a('array');
+        expect(res.body).to.have.length(0);
+        console.log(res.body);
+      });
+  });
+
+
+
 });
