@@ -171,9 +171,53 @@ describe('POST /api/notes', () => {
 }); 
 
 describe('PUT /api/notes/:id', () => {
+  it('should update and return a note object when given valid data', () => {
+    const updateNote = {
+      'content': 'content new',
+      'title': 'new title'
+    };
 
+    return chai
+      .request(app)
+      .put('/api/notes/1001')
+      .then(res => {
+        updateNote.id = res.body.id;
+        return chai
+          .request(app)
+          .put('/api/notes/1001')
+          .send(updateNote);
+      })
+      .then(res => {
+        expect(res).to.have.status(200);
+        //console.log('PUT REQUEST this is the res.body',res.body);
+        expect(res.body.id).to.eq(1001);
+        expect(res.body.title).to.eq(updateNote.title);
+        expect(res.body.content).to.eq(updateNote.content);
+      });
+  });
 }); 
 
+('PUT /api/notes/:id', () => {
+  it('should respond with a 404 for an invalid id', () => {
+    const updateNote = {
+      'content': 'content new',
+      'title': 'new title'
+    };
+
+    return chai
+      .request(app)
+      .put('/api/notes/INVALID/ENDPOINT')
+      .send(updateNote)
+      .then( res => {
+        expect(res).to.have.status(404);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a('object');
+        expect(res.body).to.include.keys('message');
+        expect(res.body.message).to.eq('Missing `title` in request body');
+      })
+      .catch(err => err.response);
+  });
+}); 
 
 describe('DELETE /api/notes/:id', () => {
   it('should delete recipes on DELETE', () => {
