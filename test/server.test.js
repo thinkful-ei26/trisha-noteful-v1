@@ -150,6 +150,25 @@ describe('POST /api/notes', () => {
   });
 }); 
 
+describe('POST /api/notes', () => {
+  it('should return object w/ message property "Missing title in request body" when missing "title" field', () => {
+    const invalidNote = {
+      something: true
+    };
+    return chai
+      .request(app)
+      .post('/api/notes')
+      .send(invalidNote)
+      .then( res => {
+        expect(res).to.have.status(404);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a('object');
+        expect(res.body).to.include.keys('message');
+        expect(res.body.message).to.eq('Missing `title` in request body');
+      })
+      .catch(err => err.response);
+  });
+}); 
 
 describe('PUT /api/notes/:id', () => {
 
