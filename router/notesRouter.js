@@ -16,10 +16,10 @@ notesRouter.get('/notes', (req, res, next) => {
 
   notes.filter(searchTerm)
     .then(item => {
-      console.log(searchTerm);
+      //console.log(searchTerm);
       if (item) {
         res.json(item);
-        console.log(item);
+        //console.log(item);
       } else {
         next();
       }

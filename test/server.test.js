@@ -45,9 +45,9 @@ describe('404 handler', function () {
 
 });
 
-describe('GET /api/notes', function () {
+describe('GET /api/notes', () => {
 
-  it('should return 10 notes on start up', function() {
+  it('should return 10 notes on start up', () => {
     return chai.request(app)
       .get('/api/notes')
       .then((res) => {
@@ -55,6 +55,18 @@ describe('GET /api/notes', function () {
         expect(res).to.be.json;
         expect(res.body).to.be.a('array');
         expect(res.body).to.have.length(10);
+      });
+  });
+
+  it('should return valid keys', () => {
+    return chai.request(app)
+      .get('/api/notes')
+      .then((res) => {
+        const expectedKeys = ['id', 'title', 'content'];
+        res.body.forEach((note) => {
+          expect(note).to.be.a('object');
+          expect(note).to.include.keys(expectedKeys);
+        });
       });
   });
 });
