@@ -175,7 +175,13 @@ describe('PUT /api/notes/:id', () => {
 }); 
 
 
-
 describe('DELETE /api/notes/:id', () => {
-
+  it('should delete recipes on DELETE', () => {
+    return chai
+      .request(app) //delete a specific id
+      .delete('/api/notes/1001')
+      .then(res => {
+        expect(res).to.have.status(204);
+      });
+  });
 }); 
