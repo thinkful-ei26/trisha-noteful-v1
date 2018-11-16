@@ -10,7 +10,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "mocha -w"
+    "test": "mocha"
   },
   "dependencies": {
     "express": "^4.16.4",
