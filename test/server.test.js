@@ -35,14 +35,13 @@ describe('Express static', function () {
 
 describe('404 handler', function () {
 
-  it('should respond with 404 when given a bad path', function () {
+  it('should respond with 404 when given a bad path', () => {
     return chai.request(app)
       .get('/DOES/NOT/EXIST')
       .then(res => {
         expect(res).to.have.status(404);
       });
   });
-
 });
 
 describe('GET /api/notes', () => {
