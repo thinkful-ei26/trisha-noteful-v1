@@ -114,18 +114,40 @@ describe('GET /api/notes/:id', () => {
   it('should respond with a 404 for an invalid id ', () => {
     return chai.request(app)
       .get('/api/notes/DOESNOTEXIST')
-      .then((res) => {
+      .then( res => {
         expect(res).to.have.status(404);
         expect(res).to.be.json;
         expect(res.body).to.be.a('object');
         expect(res.body).to.include.keys('message');
-      });
+      })
+      .catch(err => err.response);
   });
 }); 
 
 
 describe('POST /api/notes', () => {
-
+  it('should create and return a new item with location header when provided valid data', () => {
+    const newNote = {
+      title: 'new title',
+      content: 'new content'
+    };
+    return chai
+      .request(app)
+      .post('/api/notes')
+      .send(newNote)
+      .then(res => {
+        expect(res).to.have.status(201);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a('object');
+        expect(res.body).to.include.keys('id', 'title', 'content');
+        //test that the server assigned the id
+        expect(res.body.id).to.not.equal(null);
+        //console.log('POST res.body', res.body);
+        expect(res.body).to.deep.equal(
+          Object.assign(newNote, { id: res.body.id })
+        );
+      });
+  });
 }); 
 
 
